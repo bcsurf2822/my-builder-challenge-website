@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Benjamin Corbett - Personal Website</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-bg: #0d0d0d;
+        --secondary-bg: rgba(30, 30, 30, 0.7);
+        --accent-color: #00d4ff;
+        --text-primary: #ffffff;
+        --text-secondary: #cccccc;
+        --border-color: rgba(0, 212, 255, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", "Amazon Ember", "Helvetica Neue", Arial,
+          sans-serif;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        background: var(--primary-bg);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      #bg-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Shared card styles with glassmorphism */
+      .card {
+        background: var(--secondary-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero {
+        text-align: center;
+        padding: 60px 40px;
+      }
+
+      .profile-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--accent-color);
+        margin: 0 auto 20px auto;
+        display: block;
+        box-shadow: 0 0 15px var(--accent-color);
+      }
+
+      h1,
+      h3,
+      h4 {
+        font-family: "Fira Code", monospace;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+      }
+
+      .hero h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin: 20px 0 8px 0;
+      }
+
+      .tagline {
+        font-size: 18px;
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+        font-weight: 400;
+      }
+
+      .fun-facts h3 {
+        text-align: left;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 32px;
+      }
+
+      .facts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+
+      .fact-card {
+        background: rgba(42, 42, 42, 0.8);
+        border: 1px solid var(--border-color);
+        padding: 24px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .fact-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        border-color: var(--accent-color);
+      }
+
+      .fact-card h4 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--accent-color);
+      }
+
+      .fact-card p {
+        color: var(--text-secondary);
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .fact-card a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .fact-card a:hover {
+        text-decoration: underline;
+      }
+
+      .aws-journey {
+        text-align: center;
+      }
+
+      .aws-journey h3 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+
+      .aws-journey p {
+        font-size: 16px;
+        color: var(--text-secondary);
+        margin-bottom: 32px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+      }
+
+      .contact-form h3 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      .contact-form > p {
+        font-size: 16px;
+        color: var(--text-secondary);
+        margin-bottom: 32px;
+        text-align: center;
+        line-height: 1.6;
+      }
+
+      .contact-form-container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .form-message {
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 24px;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .form-message.success {
+        background: rgba(0, 255, 136, 0.1);
+        color: #00ff88;
+        border: 1px solid rgba(0, 255, 136, 0.5);
+      }
+
+      .form-message.error {
+        background: rgba(255, 0, 100, 0.1);
+        color: #ff0064;
+        border: 1px solid rgba(255, 0, 100, 0.5);
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 16px;
+        font-family: inherit;
+        background: rgba(0, 0, 0, 0.2);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .cta-button,
+      .contact-submit-btn,
+      .aws-link {
+        display: inline-block;
+        background: transparent;
+        color: var(--accent-color);
+        padding: 12px 28px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        border: 2px solid var(--accent-color);
+        cursor: pointer;
+        box-shadow: 0 0 5px var(--accent-color),
+          inset 0 0 5px var(--accent-color);
+      }
+
+      .cta-button:hover,
+      .contact-submit-btn:hover,
+      .aws-link:hover {
+        background: var(--accent-color);
+        color: var(--primary-bg);
+        box-shadow: 0 0 15px var(--accent-color), 0 0 25px var(--accent-color);
+        transform: scale(1.05);
+      }
+
+      .aws-link {
+        margin-top: 2rem;
+      }
+
+      .contact-submit-btn {
+        display: block;
+        margin: 0 auto;
+      }
+
+      footer {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+        font-size: 14px;
+        position: relative;
+        z-index: 1;
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 36px;
+        }
+
+        .tagline {
+          font-size: 16px;
+        }
+
+        .profile-photo {
+          width: 100px;
+          height: 100px;
+        }
+
+        main {
+          padding: 20px;
+        }
+
+        .card,
+        .fact-card {
+          padding: 24px;
+        }
+
+        h3 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="bg-canvas"></canvas>
+    <main>
+      <section class="hero card">
+        <img
+          src="profile-photo.png"
+          alt="Benjamin Corbett profile photo"
+          class="profile-photo"
+        />
+        <h1>Benjamin Corbett</h1>
+        <p class="tagline">
+          Full-stack Developer, Azure & AWS Enthusiast, AI & Machine Learning
+        </p>
+        <a
+          href="https://builder.aws.com/community/@benjaminc"
+          target="_blank"
+          class="aws-link"
+          >AWS Builder Center Profile</a
+        >
+      </section>
+
+      <section class="fun-facts card">
+        <h3>Fun Facts About Me</h3>
+        <div class="facts-grid">
+          <div class="fact-card">
+            <h4>⚡ Challenge In Progress</h4>
+            <p>
+              Currently working on
+              <a
+                href="https://builder.aws.com/content/31C2WxIDSQive7q2Dv5xNFCmYJj/aws-builder-challenge-2-build-a-website-on-the-cloud?trk=86c76c09-e8f4-4138-badc-604ce7bc5d77&sc_channel=el"
+                target="_blank"
+                >AWS Builder Challenge #2: Build a website on the cloud!</a
+              >
+            </p>
+          </div>
+          <div class="fact-card">
+            <h4>Learning Goals</h4>
+            <p>
+              Currently I amlooking into pursuing my bachelor's degree in Computer
+              Science and am enrolled in ACI to purue my AWS Developer Associate
+              certification. After I discovered a passion for AI and machine
+              learning I have decided that I would like to pursue the AWS Machine Learning Specialy
+              Certification.
+            </p>
+          </div>
+          <div class="fact-card">
+            <h4>My Portfolio and other projects</h4>
+            <p>
+              Check out my full portfolio at
+              <a
+                href="https://www.benjamincorbettnj.dev/"
+                target="_blank"
+                >benjamincorbettnj.dev</a
+              >
+            </p>
+          </div>
+          <div class="fact-card">
+            <h4>Work History</h4>
+            <p>
+              Before I becam a software developer, I worked as a commercial fisherman for 12 years in New Jersey, Alaska, and California.
+            </p>
+          </div>
+          <div class="fact-card">
+            <h4>Hobbies</h4>
+            <p>
+              When I'm not coding, I enjoy yoga, hiking, and surfing.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="aws-journey card">
+        <h3>AWS Builder Challenge #2</h3>
+        <p>
+          I'm currently working on the "Build a website on the cloud" challenge,
+          learning to deploy websites using AWS S3 and CloudFront. This site is
+          part of my challenge progress!
+        </p>
+        <a
+          href="https://builder.aws.com/content/31C2WxIDSQive7q2Dv5xNFCmYJj/aws-builder-challenge-2-build-a-website-on-the-cloud?trk=86c76c09-e8f4-4138-badc-604ce7bc5d77&sc_channel=el"
+          target="_blank"
+          class="cta-button"
+          >View Challenge Details</a
+        >
+      </section>
+
+      <section class="card" style="text-align: center; padding: 24px 40px;">
+        <p style="font-size: 16px; color: var(--text-secondary);">
+          This website is hosted on Amazon S3 with CloudFront for global delivery!
+        </p>
+      </section>
+
+      <section class="contact-form card">
+        <h3>Get In Touch</h3>
+        <p>Have a question or want to connect? Send me a message!</p>
+        <div id="form-message" class="form-message" style="display: none"></div>
+        <form class="contact-form-container">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="contact-submit-btn">Send Message</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Benjamin Corbett. Built with 💙 on AWS</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
