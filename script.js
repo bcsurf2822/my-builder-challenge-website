@@ -80,9 +80,7 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-
-// Contact form handler - Sends form data to AWS Lambda
-const LAMBDA_URL = 'YOUR_LAMBDA_FUNCTION_URL_HERE'; // Replace with your Function URL
+const LAMBDA_URL = 'https://q2mvpi35crk7dnienocajyhmbi0vflyq.lambda-url.us-east-2.on.aws/';
 
 function initContactForm() {
     const form = document.querySelector('.contact-form-container');
@@ -106,6 +104,8 @@ function initContactForm() {
             message: form.message.value
         };
 
+        console.log('Sending form data:', formData); // Debug log
+
         try {
             const response = await fetch(LAMBDA_URL, {
                 method: 'POST',
@@ -115,24 +115,21 @@ function initContactForm() {
                 body: JSON.stringify(formData)
             });
 
+            console.log('Response status:', response.status); // Debug log
+
             if (response.ok) {
+                const result = await response.json();
+                console.log('Response data:', result); // Debug log
                 showMessage('Message sent successfully! Thank you for reaching out.', 'success');
                 form.reset();
-            } else if (LAMBDA_URL === 'YOUR_LAMBDA_FUNCTION_URL_HERE') {
-                // Mock success if Lambda URL is not set
-                showMessage('Message sent successfully! (Demo Mode)', 'success');
-                form.reset();
             } else {
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                console.error('Error response:', errorData); // Debug log
                 showMessage('Failed to send message. Please try again.', 'error');
             }
         } catch (error) {
             console.error('Form submission error:', error);
-             if (LAMBDA_URL === 'YOUR_LAMBDA_FUNCTION_URL_HERE') {
-                showMessage('Message sent successfully! (Demo Mode)', 'success');
-                form.reset();
-            } else {
-                showMessage('Network error. Please check your connection and try again.', 'error');
-            }
+            showMessage('Network error. Please check your connection and try again.', 'error');
         }
 
         // Reset button
